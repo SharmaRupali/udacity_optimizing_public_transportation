@@ -48,10 +48,9 @@ class Producer:
 
         # TODO: Configure the AvroProducer
         self.producer = AvroProducer(
-            {
-                "bootstrap.servers": self.broker_properties["bootstrap.servers"],
-                "schema.registry.url": self.broker_properties["schema.registry.url"]
-            }
+            self.broker_properties,
+            default_key_schema=self.key_schema,
+            default_value_schema=self.value_schema
         )
 
 
