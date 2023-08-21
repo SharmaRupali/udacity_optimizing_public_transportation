@@ -39,26 +39,16 @@ class KafkaConsumer:
         self.broker_properties = {
             # TODO:
             "bootstrap.servers": "PLAINTEXT://localhost:9092",
-            "schema.registry.url": None
+            "group.id": "0",
+            "auto.offset.reset": "earliest"
         }
 
         # TODO: Create the Consumer, using the appropriate type.
         if is_avro is True:
             self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            self.consumer = AvroConsumer(
-                {
-                    "bootstrap.servers": self.broker_properties["bootstrap.servers"],
-                    "group.id": "0"
-                },
-                schema_registry=self.broker_properties["schema.registry.url"]
-            )
+            self.consumer = AvroConsumer(self.broker_properties)
         else:
-            self.consumer = Consumer(
-                {
-                    "bootstrap.servers": self.broker_properties["bootstrap.servers"],
-                    "group.id": "0"
-                }
-            )
+            self.consumer = Consumer(self.broker_properties)
 
         #
         #
@@ -103,13 +93,16 @@ class KafkaConsumer:
         #
         logger.info("_consume is complete - continuing")
 
-        message = self.consumer.poll(timeout=5.0)
+        message = self.consumer.poll(timeout=1.0)
         if message is None:
+            print(f"Data is None in topic: {self.topic_name_pattern}")
             return 0
         elif message.error() is not None:
-            print(f"An occurred occured: {message.error()}")
+            print(f"An occurred occured in topic: {self.topic_name_pattern}. Error Message: {message.error()}")
             return 0
         else:
+            self.message_handler(message)
+            print(f"Data is flowing from topic: {self.topic_name_pattern}")
             return 1
 
 
