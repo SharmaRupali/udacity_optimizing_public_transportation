@@ -18,11 +18,8 @@ class Weather:
         """Handles incoming weather data"""
         logger.info("-------------------- Weather Message Processor --------------------")
         logger.info("weather process_message is complete - continuing")
-        #
-        #
-        # TODO: Process incoming weather messages. Set the temperature and status.
-        #
-        #
+        
+        # Process incoming weather messages. Set the temperature and status.
 
         if message.topic() == "org.chicago.cta.weather.v1":
             value = json.loads(message.value())
